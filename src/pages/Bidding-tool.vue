@@ -10,22 +10,34 @@
         </div>
         <div class="auctionBox-body bg-cyan-2">
           <q-list class="row">
-            <!-- <q-item class="col-3 auctionCell q-ma-sm">
-            <q-item-section> show if delear is North </q-item-section>
-          </q-item>
-          <q-item class="col-3 auctionCell q-ma-sm">
-            <q-item-section> show if delear is East </q-item-section>
-          </q-item>
-          <q-item class="col-3 auctionCell q-ma-sm">
-            <q-item-section> show if delear is South </q-item-section>
-          </q-item> -->
+            <!-- v-Show if Dealer changes -->
+            <q-item
+              v-show="currentDealer !== 3"
+              class="col-3 auctionCell q-pa-sm q-mb-md"
+            >
+              <q-item-section> Next to bid → </q-item-section>
+            </q-item>
+            <q-item
+              v-show="currentDealer === 1 || currentDealer === 2"
+              class="col-3 auctionCell q-pa-sm q-mb-md"
+            >
+              <q-item-section> Next to bid → </q-item-section>
+            </q-item>
+            <q-item
+              v-show="currentDealer === 2"
+              class="col-3 auctionCell q-pa-sm q-mb-md"
+            >
+              <q-item-section> Next to bid → </q-item-section>
+            </q-item>
+            <!-- end show if -->
             <q-item
               class="col-3 auctionCell text-h4 q-pa-sm q-mb-md"
               v-for="bid in biddingArray"
-              :key="bid"
+              :key="bid.id"
               active-class="bg-teal-1"
+              :class="bid.isAlert ? 'bg-red' : ''"
             >
-              <q-item-section> {{ bid }} </q-item-section>
+              <q-item-section> {{ bid.bidding }} </q-item-section>
             </q-item>
           </q-list>
         </div>
@@ -34,20 +46,20 @@
         <div class="bid-actions-group q-mb-md">
           <q-list class="row">
             <q-item
-              v-for="option in bidOptions"
-              :key="option.value"
+              v-for="action in bidActions"
+              :key="action.value"
               tag="label"
               clickable
               v-ripple
               class="bid-action col text-h4 text-center"
-              :class="[option.bgColor, option.textColor]"
+              :class="[action.bgColor, action.textColor]"
               @click="clearLvBid"
             >
               <q-item-section class="hidden">
-                <q-radio v-model="bidOptionModel" :val="option.value" />
+                <q-radio v-model="bidActionModel" :val="action.value" />
               </q-item-section>
               <q-item-section>
-                <q-item-label>{{ option.value }}</q-item-label>
+                <q-item-label>{{ action.value }}</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -62,6 +74,8 @@
             text-color="black"
             spread
             push
+            size="lg"
+            @update:model-value="clearActionBid"
           />
         </div>
         <div class="bid-suits-group q-mb-md">
@@ -74,6 +88,7 @@
             text-color="black"
             spread
             push
+            size="lg"
           >
             <template v-slot:DSlot>
               <div class="row items-center no-wrap">
@@ -82,7 +97,7 @@
             </template>
             <template v-slot:HSlot>
               <div class="row items-center no-wrap">
-                <q-icon name="mdi-cards-diamond" color="red" />
+                <q-icon name="mdi-cards-heart" color="red" />
               </div>
             </template>
           </q-btn-toggle>
@@ -95,6 +110,7 @@
             text-color="black"
             color="blue"
             size="lg"
+            @click="onAlertClick"
           />
           <q-btn
             class="full-width"
@@ -103,6 +119,7 @@
             color="yellow"
             text-color="black"
             @click="onOKClick"
+            :disable="isEnd"
           />
         </div>
       </div>
@@ -125,7 +142,8 @@
           size="xl"
           color="grey-4"
           text-color="black"
-          disable
+          :disable="!isEnd"
+          @click="onNextClick"
         />
       </div>
     </div>
@@ -133,24 +151,36 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, watch } from 'vue';
 export default defineComponent({
   name: 'bidding-tool',
   setup() {
-    const biddingArray = ref([
-      'PASS',
-      'PASS',
-      'PASS',
-      'PASS',
-      '1',
-      '2',
-      '3',
-      '4',
-      '5',
-      '6',
-    ]);
+    interface bid {
+      bidding: string;
+      isAlert: boolean;
+      id: number;
+    }
 
-    const bidOptions = [
+    const biddingArray = ref<bid[]>([]);
+
+    const bidActionModel = ref('');
+    const bidLvModel = ref('');
+    const bidSuitModel = ref('');
+    const isAlert = ref(false);
+    const userInputBid = computed(() => {
+      const userBid: bid = {
+        bidding:
+          bidActionModel.value.length > 0
+            ? bidActionModel.value
+            : bidLvModel.value + bidSuitModel.value,
+        isAlert: isAlert.value,
+        id: biddingArray.value.length + 1,
+      };
+      return userBid;
+    });
+    const isEnd = ref(false);
+
+    const bidActions = [
       {
         value: 'Pass',
         textColor: 'text-black',
@@ -167,12 +197,6 @@ export default defineComponent({
         bgColor: 'bg-red-8',
       },
     ];
-
-    const bidOptionModel = ref('');
-    const bidLvModel = ref('1');
-    const bidSuitModel = ref('C');
-    const userInputBid = computed(() => bidLvModel.value + bidSuitModel.value);
-
     const bidLvOptions = [
       {
         label: '1',
@@ -205,21 +229,19 @@ export default defineComponent({
     ];
     const bidSuitOptions = [
       {
-        value: 'C',
+        value: '♣',
         icon: 'mdi-cards-club',
       },
       {
-        value: 'D',
-
+        value: '♦',
         slot: 'DSlot',
       },
       {
-        value: 'H',
-
+        value: '♥',
         slot: 'HSlot',
       },
       {
-        value: 'S',
+        value: '♠',
         icon: 'mdi-cards-spade',
       },
       {
@@ -233,30 +255,144 @@ export default defineComponent({
       bidSuitModel.value = '';
     }
 
-    function onOKClick() {
-      console.log('>>> New bid: ', bidOptionModel.value);
-      console.log('>>> old bid: ', userInputBid.value);
+    function clearActionBid() {
+      bidActionModel.value = '';
+    }
 
-      // biddingArray.value.push(userInputBid.value);
+    function clearAllbid() {
+      bidActionModel.value = '';
+      bidLvModel.value = '';
+      bidSuitModel.value = '';
+      isAlert.value = false;
+    }
+
+    function onAlertClick() {
+      isAlert.value = true;
+      // add red outline to bid
+    }
+
+    function onOKClick() {
+      // Block action if bid is empty
+      if (!userInputBid.value.bidding) {
+        console.log('>>> Bid is empty');
+        return;
+      }
+
       // .push() new item to biddingArray
+      biddingArray.value.push(userInputBid.value);
+
+      // Reset all
+      setTimeout(() => clearAllbid(), 100);
     }
 
     function onUndoClick() {
       biddingArray.value.pop();
     }
 
+    function onNextClick() {
+      // Clear all
+      clearAllbid();
+      biddingArray.value = [];
+      isEnd.value = false;
+
+      // Change dealer
+
+      // Change vulnerable
+      changeDealer();
+    }
+
+    function checkEnding(arr: bid[]) {
+      return (
+        arr[1].bidding === 'Pass' &&
+        arr[1].bidding === arr[2].bidding &&
+        arr[2].bidding === arr[3].bidding
+      );
+    }
+
+    const target = computed(() => biddingArray.value.slice(-4));
+
+    // Watcher checks if 3 or 4 consecutive passes appear
+    watch(
+      () => target.value,
+      () => {
+        target.value.length < 4
+          ? null
+          : checkEnding(target.value)
+          ? (isEnd.value = true)
+          : null;
+      }
+    );
+
+    const vulTable = [
+      {
+        title: 'none',
+        short: 'O',
+      },
+      {
+        title: 'NS',
+        short: 'N',
+      },
+      {
+        title: 'EW',
+        short: 'E',
+      },
+      {
+        title: 'both',
+        short: 'B',
+      },
+    ];
+
+    function checkVul(handNO: number): number {
+      let result = 0;
+
+      // check vul
+      const stargRow = Math.floor(handNO / 5);
+      // return status
+      switch (stargRow) {
+        case 0:
+          result = handNO % 4;
+          break;
+        case 1:
+          result = (handNO % 4) + 1;
+          break;
+        case 3:
+          result = (handNO % 4) + 2;
+          break;
+        case 4:
+          result = (handNO % 4) + 3;
+          break;
+      }
+
+      return result;
+    }
+
+    // 0 == N; 1 == E; 2 == S; 3 == W;
+    const currentDealer = ref(0);
+
+    function changeDealer() {
+      currentDealer.value = (currentDealer.value + 1) % 4;
+    }
+
     return {
       biddingArray,
-      bidOptions,
-      bidOptionModel,
-      bidLvModel,
+
+      bidActionModel,
       bidSuitModel,
+      bidLvModel,
+
+      bidActions,
       bidLvOptions,
       bidSuitOptions,
 
+      isEnd,
+      currentDealer,
+
       clearLvBid,
+      clearActionBid,
       onOKClick,
       onUndoClick,
+      onAlertClick,
+      onNextClick,
     };
   },
 });
