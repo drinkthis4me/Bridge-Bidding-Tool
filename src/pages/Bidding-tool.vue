@@ -3,28 +3,36 @@
     <div class="column">
       <div class="auctionBox col q-mb-md bg-white">
         <div class="auctionBox-head row text-center">
-          <div class="col text-h4" :class="{ 'bg-red': eIsVul }">West</div>
-          <div class="col text-h4" :class="{ 'bg-red': nIsVul }">North</div>
-          <div class="col text-h4" :class="{ 'bg-red': eIsVul }">East</div>
-          <div class="col text-h4" :class="{ 'bg-red': nIsVul }">South</div>
+          <div class="col text-h4" :class="{ 'bg-red': store.eIsVul }">
+            West
+          </div>
+          <div class="col text-h4" :class="{ 'bg-red': store.nIsVul }">
+            North
+          </div>
+          <div class="col text-h4" :class="{ 'bg-red': store.eIsVul }">
+            East
+          </div>
+          <div class="col text-h4" :class="{ 'bg-red': store.nIsVul }">
+            South
+          </div>
         </div>
         <div class="auctionBox-body bg-cyan-2">
           <q-list class="row">
             <!-- v-Show if Dealer changes -->
             <q-item
-              v-show="currentDealer !== 0"
+              v-show="store.currentDealer !== 0"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
               <q-item-section> Next to bid → </q-item-section>
             </q-item>
             <q-item
-              v-show="currentDealer === 2 || currentDealer === 3"
+              v-show="store.currentDealer === 2 || store.currentDealer === 3"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
               <q-item-section> Next to bid → </q-item-section>
             </q-item>
             <q-item
-              v-show="currentDealer === 3"
+              v-show="store.currentDealer === 3"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
               <q-item-section> Next to bid → </q-item-section>
@@ -32,7 +40,7 @@
             <!-- end show if -->
             <q-item
               class="col-3 auctionCell text-h4 q-pa-sm q-mb-md"
-              v-for="bid in biddingArray"
+              v-for="bid in store.biddingArray"
               :key="bid.id"
               active-class="bg-teal-1"
               :class="bid.isAlert ? 'bg-red' : ''"
@@ -53,11 +61,10 @@
               v-ripple
               class="bid-action col text-h4 text-center"
               :class="[action.bgColor, action.textColor]"
-              active-class="text-bold"
-              @click="clearLvBid"
+              @click="store.clearLvBid"
             >
               <q-item-section class="hidden">
-                <q-radio v-model="bidActionModel" :val="action.value" />
+                <q-radio v-model="store.bidActionModel" :val="action.value" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ action.value }}</q-item-label>
@@ -67,7 +74,7 @@
         </div>
         <div class="bid-level-group q-mb-sm">
           <q-btn-toggle
-            v-model="bidLvModel"
+            v-model="store.bidLvModel"
             :options="bidLvOptions"
             toggle-color="amber-7"
             toggle-text-color="black"
@@ -76,12 +83,12 @@
             spread
             push
             size="lg"
-            @update:model-value="clearActionBid"
+            @update:model-value="store.clearActionBid"
           />
         </div>
         <div class="bid-suits-group q-mb-md">
           <q-btn-toggle
-            v-model="bidSuitModel"
+            v-model="store.bidSuitModel"
             :options="bidSuitOptions"
             toggle-color="amber-7"
             toggle-text-color="black"
@@ -111,16 +118,16 @@
             text-color="black"
             color="blue"
             size="lg"
-            @click="onAlertClick"
+            @click="store.onAlertClick"
           />
           <q-btn
             class="full-width"
             label="OK"
             size="xl"
-            :color="isEnd ? 'grey-4' : 'yellow'"
+            :color="store.isEnd ? 'grey-4' : 'yellow'"
             text-color="black"
-            @click="onOKClick"
-            :disable="isEnd"
+            @click="store.onOKClick"
+            :disable="store.isEnd"
           />
         </div>
       </div>
@@ -132,7 +139,7 @@
           size="xl"
           color="grey-4"
           text-color="black"
-          @click="onUndoClick"
+          @click="store.onUndoClick"
         />
 
         <q-btn
@@ -141,10 +148,10 @@
           label="next hand"
           no-caps
           size="xl"
-          :color="isEnd ? 'yellow' : 'grey-4'"
+          :color="store.isEnd ? 'yellow' : 'grey-4'"
           text-color="black"
-          :disable="!isEnd"
-          @click="onNextClick"
+          :disable="!store.isEnd"
+          @click="store.onNextClick"
         />
       </div>
     </div>
@@ -152,33 +159,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from 'vue';
+import { defineComponent } from 'vue';
+import { useBiddingStore } from 'stores/bidding-store';
 export default defineComponent({
   name: 'bidding-tool',
   setup() {
-    interface bid {
-      bidding: string;
-      isAlert: boolean;
-      id: number;
-    }
-
-    const biddingArray = ref<bid[]>([]);
-
-    const bidActionModel = ref('');
-    const bidLvModel = ref('');
-    const bidSuitModel = ref('');
-    const isAlert = ref(false);
-    const userInputBid = computed(() => {
-      const userBid: bid = {
-        bidding:
-          bidActionModel.value.length > 0
-            ? bidActionModel.value
-            : bidLvModel.value + bidSuitModel.value,
-        isAlert: isAlert.value,
-        id: biddingArray.value.length + 1,
-      };
-      return userBid;
-    });
+    const store = useBiddingStore();
 
     const bidActions = [
       {
@@ -250,159 +236,12 @@ export default defineComponent({
       },
     ];
 
-    const isEnd = ref(false);
-    const vulSequence = [
-      'O',
-      'N',
-      'E',
-      'B',
-      'N',
-      'E',
-      'B',
-      'O',
-      'E',
-      'B',
-      'O',
-      'N',
-      'B',
-      'O',
-      'N',
-      'E',
-    ];
-    const currentHand = ref(1);
-    const currentDealer = computed(() => currentHand.value % 4);
-    const nIsVul = ref(false);
-    const eIsVul = ref(false);
-
-    function clearLvBid() {
-      bidLvModel.value = '';
-      bidSuitModel.value = '';
-    }
-
-    function clearActionBid() {
-      bidActionModel.value = '';
-    }
-
-    function clearAllbid() {
-      bidActionModel.value = '';
-      bidLvModel.value = '';
-      bidSuitModel.value = '';
-      isAlert.value = false;
-    }
-
-    function onAlertClick() {
-      isAlert.value = true;
-      // add red outline to bid
-    }
-
-    function onOKClick() {
-      // Block action if bid is empty
-      if (!userInputBid.value.bidding) {
-        console.log('>>> Bid is empty');
-        return;
-      }
-
-      // .push() new item to biddingArray
-      biddingArray.value.push(userInputBid.value);
-
-      // Reset all
-      setTimeout(() => clearAllbid(), 100);
-    }
-
-    function onUndoClick() {
-      biddingArray.value.pop();
-    }
-
-    function onNextClick() {
-      // Clear all
-      clearAllbid();
-      biddingArray.value = [];
-      isEnd.value = false;
-
-      // Go to next Hand
-      goToNextHand();
-    }
-
-    function checkEnding(arr: bid[]) {
-      return (
-        arr[1].bidding === 'Pass' &&
-        arr[1].bidding === arr[2].bidding &&
-        arr[2].bidding === arr[3].bidding
-      );
-    }
-
-    const target = computed(() => biddingArray.value.slice(-4));
-
-    // Watcher checks if 3 or 4 consecutive passes appear
-    watch(
-      () => target.value,
-      () => {
-        target.value.length < 4
-          ? null
-          : checkEnding(target.value)
-          ? (isEnd.value = true)
-          : null;
-      }
-    );
-
-  
-    function goToNextHand() {
-      // Change hand NO
-      currentHand.value < 16
-        ? (currentHand.value += 1)
-        : (currentHand.value = 1);
-
-      // Change vulnerability
-      changeVul();
-    }
-
-    function changeVul() {
-      const target = vulSequence[currentHand.value - 1];
-      switch (target) {
-        case 'N':
-          nIsVul.value = true;
-          eIsVul.value = false;
-          break;
-        case 'E':
-          nIsVul.value = false;
-          eIsVul.value = true;
-          break;
-        case 'B':
-          nIsVul.value = true;
-          eIsVul.value = true;
-          break;
-        case 'O':
-          nIsVul.value = false;
-          eIsVul.value = false;
-          break;
-      }
-    }
-
     return {
-      biddingArray,
-
-      bidActionModel,
-      bidSuitModel,
-      bidLvModel,
+      store,
 
       bidActions,
       bidLvOptions,
       bidSuitOptions,
-
-      isEnd,
-      currentDealer,
-
-      nIsVul,
-      eIsVul,
-
-      clearLvBid,
-      clearActionBid,
-      onOKClick,
-      onUndoClick,
-      onAlertClick,
-      onNextClick,
-
-      goToNextHand,
     };
   },
 });
