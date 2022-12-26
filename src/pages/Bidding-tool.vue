@@ -3,28 +3,28 @@
     <div class="column">
       <div class="auctionBox col q-mb-md bg-white">
         <div class="auctionBox-head row text-center">
-          <div class="col text-h4">West</div>
-          <div class="col text-h4">North</div>
-          <div class="col text-h4">East</div>
-          <div class="col text-h4">South</div>
+          <div class="col text-h4" :class="{ 'bg-red': eIsVul }">West</div>
+          <div class="col text-h4" :class="{ 'bg-red': nIsVul }">North</div>
+          <div class="col text-h4" :class="{ 'bg-red': eIsVul }">East</div>
+          <div class="col text-h4" :class="{ 'bg-red': nIsVul }">South</div>
         </div>
         <div class="auctionBox-body bg-cyan-2">
           <q-list class="row">
             <!-- v-Show if Dealer changes -->
             <q-item
-              v-show="currentDealer !== 3"
+              v-show="currentDealer !== 0"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
               <q-item-section> Next to bid → </q-item-section>
             </q-item>
             <q-item
-              v-show="currentDealer === 1 || currentDealer === 2"
+              v-show="currentDealer === 2 || currentDealer === 3"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
               <q-item-section> Next to bid → </q-item-section>
             </q-item>
             <q-item
-              v-show="currentDealer === 2"
+              v-show="currentDealer === 3"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
               <q-item-section> Next to bid → </q-item-section>
@@ -53,6 +53,7 @@
               v-ripple
               class="bid-action col text-h4 text-center"
               :class="[action.bgColor, action.textColor]"
+              active-class="text-bold"
               @click="clearLvBid"
             >
               <q-item-section class="hidden">
@@ -116,7 +117,7 @@
             class="full-width"
             label="OK"
             size="xl"
-            color="yellow"
+            :color="isEnd ? 'grey-4' : 'yellow'"
             text-color="black"
             @click="onOKClick"
             :disable="isEnd"
@@ -140,7 +141,7 @@
           label="next hand"
           no-caps
           size="xl"
-          color="grey-4"
+          :color="isEnd ? 'yellow' : 'grey-4'"
           text-color="black"
           :disable="!isEnd"
           @click="onNextClick"
@@ -178,7 +179,6 @@ export default defineComponent({
       };
       return userBid;
     });
-    const isEnd = ref(false);
 
     const bidActions = [
       {
@@ -250,6 +250,30 @@ export default defineComponent({
       },
     ];
 
+    const isEnd = ref(false);
+    const vulSequence = [
+      'O',
+      'N',
+      'E',
+      'B',
+      'N',
+      'E',
+      'B',
+      'O',
+      'E',
+      'B',
+      'O',
+      'N',
+      'B',
+      'O',
+      'N',
+      'E',
+    ];
+    const currentHand = ref(1);
+    const currentDealer = computed(() => currentHand.value % 4);
+    const nIsVul = ref(false);
+    const eIsVul = ref(false);
+
     function clearLvBid() {
       bidLvModel.value = '';
       bidSuitModel.value = '';
@@ -295,10 +319,8 @@ export default defineComponent({
       biddingArray.value = [];
       isEnd.value = false;
 
-      // Change dealer
-
-      // Change vulnerable
-      changeDealer();
+      // Go to next Hand
+      goToNextHand();
     }
 
     function checkEnding(arr: bid[]) {
@@ -323,54 +345,37 @@ export default defineComponent({
       }
     );
 
-    const vulTable = [
-      {
-        title: 'none',
-        short: 'O',
-      },
-      {
-        title: 'NS',
-        short: 'N',
-      },
-      {
-        title: 'EW',
-        short: 'E',
-      },
-      {
-        title: 'both',
-        short: 'B',
-      },
-    ];
+  
+    function goToNextHand() {
+      // Change hand NO
+      currentHand.value < 16
+        ? (currentHand.value += 1)
+        : (currentHand.value = 1);
 
-    function checkVul(handNO: number): number {
-      let result = 0;
-
-      // check vul
-      const stargRow = Math.floor(handNO / 5);
-      // return status
-      switch (stargRow) {
-        case 0:
-          result = handNO % 4;
-          break;
-        case 1:
-          result = (handNO % 4) + 1;
-          break;
-        case 3:
-          result = (handNO % 4) + 2;
-          break;
-        case 4:
-          result = (handNO % 4) + 3;
-          break;
-      }
-
-      return result;
+      // Change vulnerability
+      changeVul();
     }
 
-    // 0 == N; 1 == E; 2 == S; 3 == W;
-    const currentDealer = ref(0);
-
-    function changeDealer() {
-      currentDealer.value = (currentDealer.value + 1) % 4;
+    function changeVul() {
+      const target = vulSequence[currentHand.value - 1];
+      switch (target) {
+        case 'N':
+          nIsVul.value = true;
+          eIsVul.value = false;
+          break;
+        case 'E':
+          nIsVul.value = false;
+          eIsVul.value = true;
+          break;
+        case 'B':
+          nIsVul.value = true;
+          eIsVul.value = true;
+          break;
+        case 'O':
+          nIsVul.value = false;
+          eIsVul.value = false;
+          break;
+      }
     }
 
     return {
@@ -387,12 +392,17 @@ export default defineComponent({
       isEnd,
       currentDealer,
 
+      nIsVul,
+      eIsVul,
+
       clearLvBid,
       clearActionBid,
       onOKClick,
       onUndoClick,
       onAlertClick,
       onNextClick,
+
+      goToNextHand,
     };
   },
 });
