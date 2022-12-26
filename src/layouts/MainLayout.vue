@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lhh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar class="justify-between">
         <q-btn
           flat
           dense
@@ -11,16 +11,15 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-        <q-btn flat stretch label="Bidding tool" no-caps to="/bidding"/>
+        <q-btn flat stretch label="Bidding Tool" no-caps to="/bidding" class="text-h6"/>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>v0.0.2</div>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+        <q-item-label header> Planned feature: settings </q-item-label>
 
         <EssentialLink
           v-for="link in essentialLinks"
