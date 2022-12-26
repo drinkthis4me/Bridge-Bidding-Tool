@@ -3,16 +3,16 @@
     <div class="column">
       <div class="auctionBox col q-mb-md bg-white">
         <div class="auctionBox-head row text-center">
-          <div class="col text-h4" :class="{ 'bg-red': store.eIsVul }">
+          <div class="col text-h5" :class="{ 'bg-red': store.eIsVul }">
             West
           </div>
-          <div class="col text-h4" :class="{ 'bg-red': store.nIsVul }">
+          <div class="col text-h5" :class="{ 'bg-red': store.nIsVul }">
             North
           </div>
-          <div class="col text-h4" :class="{ 'bg-red': store.eIsVul }">
+          <div class="col text-h5" :class="{ 'bg-red': store.eIsVul }">
             East
           </div>
-          <div class="col text-h4" :class="{ 'bg-red': store.nIsVul }">
+          <div class="col text-h5" :class="{ 'bg-red': store.nIsVul }">
             South
           </div>
         </div>
@@ -39,7 +39,7 @@
             </q-item>
             <!-- end show if -->
             <q-item
-              class="col-3 auctionCell text-h4 q-pa-sm q-mb-md"
+              class="col-3 auctionCell text-h5 q-pa-sm q-mb-md"
               v-for="bid in store.biddingArray"
               :key="bid.id"
               active-class="bg-teal-1"
@@ -59,7 +59,7 @@
               tag="label"
               clickable
               v-ripple
-              class="bid-action col text-h4 text-center"
+              class="bid-action col text-h4 text-center q-pl-none"
               :class="[action.bgColor, action.textColor]"
               @click="store.clearLvBid"
             >
@@ -122,7 +122,7 @@
           />
           <q-btn
             class="full-width"
-            label="OK"
+            :label="store.isEnd? 'Bidding Over' :'OK'"
             size="xl"
             :color="store.isEnd ? 'grey-4' : 'yellow'"
             text-color="black"
@@ -145,7 +145,7 @@
         <q-btn
           class="full-width"
           icon="arrow_forward"
-          label="next hand"
+          label="Next Hand"
           no-caps
           size="xl"
           :color="store.isEnd ? 'yellow' : 'grey-4'"
