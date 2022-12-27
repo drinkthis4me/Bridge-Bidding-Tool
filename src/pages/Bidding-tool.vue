@@ -43,7 +43,7 @@
               v-for="bid in store.biddingArray"
               :key="bid.id"
               active-class="bg-teal-1"
-              :class="bid.isAlert ? 'bg-red' : ''"
+              :class="bid.isAlert ? 'bg-blue' : ''"
             >
               <q-item-section> {{ bid.bidding }} </q-item-section>
             </q-item>
@@ -122,7 +122,7 @@
           />
           <q-btn
             class="full-width"
-            :label="store.isEnd? 'Bidding Over' :'OK'"
+            :label="store.isEnd ? 'Bidding Over' : 'OK'"
             size="xl"
             :color="store.isEnd ? 'grey-4' : 'yellow'"
             text-color="black"
@@ -139,6 +139,7 @@
           size="xl"
           color="grey-4"
           text-color="black"
+          :disable="store.biddingArray.length < 1"
           @click="store.onUndoClick"
         />
 

@@ -87,6 +87,7 @@ export const useBiddingStore = defineStore('bidding',()=> {
 
   function onUndoClick() {
     biddingArray.value.pop();
+    isEnd.value = false;
   }
 
   function onNextClick() {
