@@ -1,7 +1,6 @@
 <template>
   <q-page padding class="myPage-style">
     <div class="column">
-      {{ store.biddingHistory }}
       <div class="infoBox text-center bg-white">
         Current Hand:
         <strong>
@@ -27,19 +26,19 @@
           <q-list class="row">
             <!-- v-Show if Dealer changes -->
             <q-item
-              v-show="store.currentDealer !== 0"
+              v-show="store.currentDealer !== 'W'"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
               <q-item-section> Dealer → </q-item-section>
             </q-item>
             <q-item
-              v-show="store.currentDealer === 2 || store.currentDealer === 3"
+              v-show="store.currentDealer === 'E' || store.currentDealer === 'S'"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
               <q-item-section> Dealer → </q-item-section>
             </q-item>
             <q-item
-              v-show="store.currentDealer === 3"
+              v-show="store.currentDealer === 'S'"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
               <q-item-section> Dealer → </q-item-section>
@@ -159,7 +158,6 @@
           :disable="store.biddingArray.length < 1"
           @click="store.onUndoClick"
         />
-
         <q-btn
           class="full-width"
           icon="arrow_forward"

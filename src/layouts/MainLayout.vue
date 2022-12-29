@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lhh Lpr lFf">
     <q-header elevated>
-      <q-toolbar class="justify-between">
+      <q-toolbar class="">
         <q-btn
           flat
           dense
@@ -11,15 +11,14 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-btn flat stretch label="Bidding Tool" no-caps to="/bidding" class="text-h6"/>
+        <q-btn flat stretch label="Bidding Tool" no-caps to="/" class="text-h6"/>
 
-        <div>v0.0.2</div>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
-        <q-item-label header> Planned feature: settings </q-item-label>
+        <q-item-label header> Planned feature: settings/ about </q-item-label>
 
         <EssentialLink
           v-for="link in essentialLinks"
@@ -41,47 +40,24 @@ import EssentialLink from 'components/EssentialLink.vue';
 
 const linksList = [
   {
-    title: 'Docs',
+    title: 'Bid History',
     caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
+    icon: 'history',
+    link: '/history',
   },
   {
-    title: 'Github',
+    title: 'Setting',
     caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
+    icon: 'settings',
+    link: '/',
   },
   {
-    title: 'Discord Chat Channel',
+    title: 'About',
     caption: 'chat.quasar.dev',
     icon: 'chat',
-    link: 'https://chat.quasar.dev',
+    link: '/',
   },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
+ 
 ];
 
 export default defineComponent({

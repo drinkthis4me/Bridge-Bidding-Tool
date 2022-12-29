@@ -8,8 +8,15 @@ export const useBiddingStore = defineStore('bidding', () => {
     id: number;
   }
 
+  interface history {
+    handNo: number;
+    dealer: string;
+    vul: string;
+    sequence: bid[];
+  }
+
   const biddingArray = ref<bid[]>([]);
-  const biddingHistory = ref<bid[][]>([]);
+  const bidHistory = ref<history[]>([]);
 
   const bidActionModel = ref('');
   const bidLvModel = ref('');
@@ -49,7 +56,29 @@ export const useBiddingStore = defineStore('bidding', () => {
     'E',
   ];
   const currentHand = ref(1);
-  const currentDealer = computed(() => currentHand.value % 4);
+  const currentDealer = computed(() => {
+    const r = currentHand.value % 4;
+    let ans = '';
+
+    switch (r) {
+      case 1:
+        ans = 'N';
+        break;
+      case 2:
+        ans = 'E';
+        break;
+      case 3:
+        ans = 'S';
+        break;
+      case 0:
+        ans = 'W';
+        break;
+      default:
+        ans = 'error';
+    }
+
+    return ans;
+  });
   const nIsVul = ref(false);
   const eIsVul = ref(false);
 
@@ -70,8 +99,7 @@ export const useBiddingStore = defineStore('bidding', () => {
   }
 
   function onAlertClick() {
-    isAlert.value = true;
-    // add red outline to bid
+    isAlert.value = true;    
   }
 
   function onOKClick() {
@@ -95,7 +123,7 @@ export const useBiddingStore = defineStore('bidding', () => {
 
   function onNextClick() {
     // Save to history
-    biddingHistory.value.push(biddingArray.value);
+    saveToHistory();
 
     // Clear all
     clearAllbid();
@@ -128,14 +156,6 @@ export const useBiddingStore = defineStore('bidding', () => {
     }
   );
 
-  function goToNextHand() {
-    // Change hand NO
-    currentHand.value < 16 ? (currentHand.value += 1) : (currentHand.value = 1);
-
-    // Change vulnerability
-    changeVul();
-  }
-
   function changeVul() {
     const target = vulSequence[currentHand.value - 1];
     switch (target) {
@@ -158,9 +178,27 @@ export const useBiddingStore = defineStore('bidding', () => {
     }
   }
 
+  function goToNextHand() {
+    // Change hand NO
+    currentHand.value < 16 ? (currentHand.value += 1) : (currentHand.value = 1);
+
+    // Change vulnerability
+    changeVul();
+  }
+
+  function saveToHistory() {
+    const target = {
+      handNo: currentHand.value,
+      dealer: currentDealer.value,
+      vul: vulSequence[currentHand.value - 1],
+      sequence: [...biddingArray.value],
+    };
+    bidHistory.value.push(target);
+  }
+
   return {
     biddingArray,
-    biddingHistory,
+    bidHistory,
 
     bidActionModel,
     bidSuitModel,

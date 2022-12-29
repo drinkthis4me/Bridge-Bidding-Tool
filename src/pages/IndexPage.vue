@@ -2,9 +2,9 @@
   <q-page class="column items-center justify-center">
     <div class="text-h3 q-mb-md">Welcome</div>
     <div class="text-h4 text-center q-mb-md">
-      Bidding Tool v0.0.2    
+      Bidding Tool v0.0.4    
     </div>
-    <div class="text-h4 q-mb-md">@Github: <a href="https://github.com/drinkthis4me">drinkthis4me</a></div>
+    <div class="text-h4 q-mb-md">Github: <a href="https://github.com/drinkthis4me/Bridge-Bidding-Tool">drinkthis4me</a></div>
     <q-btn
       label="Start Bidding"
       no-caps
