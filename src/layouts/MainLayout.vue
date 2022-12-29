@@ -40,7 +40,7 @@ import EssentialLink from 'components/EssentialLink.vue';
 
 const linksList = [
   {
-    title: 'Bid History',
+    title: 'History',
     caption: 'quasar.dev',
     icon: 'history',
     link: '/history',
@@ -55,7 +55,7 @@ const linksList = [
     title: 'About',
     caption: 'chat.quasar.dev',
     icon: 'chat',
-    link: '/',
+    link: '/about',
   },
  
 ];
