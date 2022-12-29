@@ -1,6 +1,13 @@
 <template>
   <q-page padding class="myPage-style">
     <div class="column">
+      {{ store.biddingHistory }}
+      <div class="infoBox text-center bg-white">
+        Current Hand:
+        <strong>
+          {{ store.currentHand }}
+        </strong>
+      </div>
       <div class="auctionBox col q-mb-md bg-white">
         <div class="auctionBox-head row text-center">
           <div class="col text-h5" :class="{ 'bg-red': store.eIsVul }">
@@ -23,19 +30,19 @@
               v-show="store.currentDealer !== 0"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
-              <q-item-section> Next to bid → </q-item-section>
+              <q-item-section> Dealer → </q-item-section>
             </q-item>
             <q-item
               v-show="store.currentDealer === 2 || store.currentDealer === 3"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
-              <q-item-section> Next to bid → </q-item-section>
+              <q-item-section> Dealer → </q-item-section>
             </q-item>
             <q-item
               v-show="store.currentDealer === 3"
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
-              <q-item-section> Next to bid → </q-item-section>
+              <q-item-section> Dealer → </q-item-section>
             </q-item>
             <!-- end show if -->
             <q-item
@@ -43,7 +50,12 @@
               v-for="bid in store.biddingArray"
               :key="bid.id"
               active-class="bg-teal-1"
-              :class="bid.isAlert ? 'bg-blue' : ''"
+              :class="[
+                { 'bg-blue-3': bid.isAlert },
+                { 'text-green': bid.bidding.includes('♣') },
+                { 'text-orange': bid.bidding.includes('♦') },
+                { 'text-red': bid.bidding.includes('♥') },
+              ]"
             >
               <q-item-section> {{ bid.bidding }} </q-item-section>
             </q-item>
@@ -76,7 +88,7 @@
           <q-btn-toggle
             v-model="store.bidLvModel"
             :options="bidLvOptions"
-            toggle-color="amber-7"
+            toggle-color="blue-grey-3"
             toggle-text-color="black"
             color="white"
             text-color="black"
@@ -90,7 +102,7 @@
           <q-btn-toggle
             v-model="store.bidSuitModel"
             :options="bidSuitOptions"
-            toggle-color="amber-7"
+            toggle-color="blue-grey-3"
             toggle-text-color="black"
             color="white"
             text-color="black"
@@ -98,9 +110,14 @@
             push
             size="lg"
           >
+            <template v-slot:CSlot>
+              <div class="row items-center no-wrap">
+                <q-icon name="mdi-cards-club" color="green" />
+              </div>
+            </template>
             <template v-slot:DSlot>
               <div class="row items-center no-wrap">
-                <q-icon name="mdi-cards-diamond" color="red" />
+                <q-icon name="mdi-cards-diamond" color="orange" />
               </div>
             </template>
             <template v-slot:HSlot>
@@ -217,7 +234,7 @@ export default defineComponent({
     const bidSuitOptions = [
       {
         value: '♣',
-        icon: 'mdi-cards-club',
+        slot: 'CSlot',
       },
       {
         value: '♦',
@@ -251,6 +268,12 @@ export default defineComponent({
 <style scoped lang="scss">
 .myPage-style {
   background-color: green;
+}
+
+.infoBox {
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
 }
 
 .auctionBox {

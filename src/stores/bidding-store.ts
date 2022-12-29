@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue';
 
-export const useBiddingStore = defineStore('bidding',()=> {
+export const useBiddingStore = defineStore('bidding', () => {
   interface bid {
     bidding: string;
     isAlert: boolean;
@@ -9,23 +9,26 @@ export const useBiddingStore = defineStore('bidding',()=> {
   }
 
   const biddingArray = ref<bid[]>([]);
+  const biddingHistory = ref<bid[][]>([]);
 
   const bidActionModel = ref('');
   const bidLvModel = ref('');
   const bidSuitModel = ref('');
   const isAlert = ref(false);
   const userInputBid = computed(() => {
+    const bidWAction = bidActionModel.value;
+    const bidWLvAndSuit =
+      bidLvModel.value.length > 0 && bidSuitModel.value.length > 0
+        ? bidLvModel.value + bidSuitModel.value
+        : '';
     const userBid: bid = {
-      bidding:
-        bidActionModel.value.length > 0
-          ? bidActionModel.value
-          : bidLvModel.value + bidSuitModel.value,
+      bidding: bidWAction || bidWLvAndSuit,
       isAlert: isAlert.value,
       id: biddingArray.value.length + 1,
     };
     return userBid;
   });
- 
+
   const isEnd = ref(false);
   const vulSequence = [
     'O',
@@ -91,6 +94,9 @@ export const useBiddingStore = defineStore('bidding',()=> {
   }
 
   function onNextClick() {
+    // Save to history
+    biddingHistory.value.push(biddingArray.value);
+
     // Clear all
     clearAllbid();
     biddingArray.value = [];
@@ -124,9 +130,7 @@ export const useBiddingStore = defineStore('bidding',()=> {
 
   function goToNextHand() {
     // Change hand NO
-    currentHand.value < 16
-      ? (currentHand.value += 1)
-      : (currentHand.value = 1);
+    currentHand.value < 16 ? (currentHand.value += 1) : (currentHand.value = 1);
 
     // Change vulnerability
     changeVul();
@@ -154,14 +158,16 @@ export const useBiddingStore = defineStore('bidding',()=> {
     }
   }
 
-  return{
+  return {
     biddingArray,
+    biddingHistory,
 
     bidActionModel,
     bidSuitModel,
     bidLvModel,
 
     isEnd,
+    currentHand,
     currentDealer,
 
     nIsVul,
@@ -175,5 +181,5 @@ export const useBiddingStore = defineStore('bidding',()=> {
     onNextClick,
 
     goToNextHand,
-  }
+  };
 });
