@@ -2,7 +2,7 @@
   <q-page class="column items-center justify-center">
     <div class="text-h3 q-mb-md">Welcome</div>
     <div class="text-h4 text-center q-mb-md">
-      Bidding Tool v0.0.5    
+      Bidding Tool v0.0.7    
     </div>
     <q-btn
       label="Start Bidding"

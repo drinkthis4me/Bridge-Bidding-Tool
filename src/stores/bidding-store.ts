@@ -1,22 +1,9 @@
 import { defineStore } from 'pinia';
 import { ref, computed, watch, reactive } from 'vue';
-
+import { Bid, History } from '../types';
 export const useBiddingStore = defineStore('bidding', () => {
-  interface bid {
-    bidding: string;
-    isAlert: boolean;
-    id: number;
-  }
-
-  interface history {
-    handNo: number;
-    dealer: string;
-    vul: string;
-    sequence: bid[];
-  }
-
-  const biddingArray = ref<bid[]>([]);
-  const bidHistory = ref<history[]>([]);
+  const biddingArray = ref<Bid[]>([]);
+  const bidHistory = ref<History[]>([]);
 
   const userInputModel = reactive({
     action: '',
@@ -31,14 +18,13 @@ export const useBiddingStore = defineStore('bidding', () => {
       userInputModel.lv.length > 0 && userInputModel.suit.length > 0
         ? userInputModel.lv + userInputModel.suit
         : '';
-    const userBid: bid = {
+    const userBid: Bid = {
       bidding: bidWAction || bidWLvAndSuit,
       isAlert: userInputModel.alert,
       id: biddingArray.value.length + 1,
     };
     return userBid;
   });
-
 
   const vulSequence = [
     'O',
@@ -64,8 +50,8 @@ export const useBiddingStore = defineStore('bidding', () => {
     handNumber: 1,
     nIsVul: false,
     eIsVul: false,
-  }) 
-  
+  });
+
   const currentDealer = computed(() => {
     const r = status.handNumber % 4;
     let ans = '';
@@ -142,7 +128,7 @@ export const useBiddingStore = defineStore('bidding', () => {
     goToNextHand();
   }
 
-  function checkEnding(arr: bid[]) {
+  function checkEnding(arr: Bid[]) {
     return (
       arr[1].bidding === 'Pass' &&
       arr[1].bidding === arr[2].bidding &&
@@ -199,6 +185,8 @@ export const useBiddingStore = defineStore('bidding', () => {
       handNo: status.handNumber,
       dealer: currentDealer.value,
       vul: vulSequence[status.handNumber - 1],
+      nIsVul: status.nIsVul,
+      eIsVul: status.eIsVul,
       sequence: [...biddingArray.value],
     };
     bidHistory.value.push(target);
