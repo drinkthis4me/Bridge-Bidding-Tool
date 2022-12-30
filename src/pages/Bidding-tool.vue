@@ -4,21 +4,21 @@
       <div class="infoBox text-center bg-white">
         Current Hand:
         <strong>
-          {{ store.currentHand }}
+          {{ store.status.handNumber }}
         </strong>
       </div>
       <div class="auctionBox col q-mb-md bg-white">
         <div class="auctionBox-head row text-center">
-          <div class="col text-h5" :class="{ 'bg-red': store.eIsVul }">
+          <div class="col text-h5" :class="{ 'bg-red': store.status.eIsVul }">
             West
           </div>
-          <div class="col text-h5" :class="{ 'bg-red': store.nIsVul }">
+          <div class="col text-h5" :class="{ 'bg-red': store.status.nIsVul }">
             North
           </div>
-          <div class="col text-h5" :class="{ 'bg-red': store.eIsVul }">
+          <div class="col text-h5" :class="{ 'bg-red': store.status.eIsVul }">
             East
           </div>
-          <div class="col text-h5" :class="{ 'bg-red': store.nIsVul }">
+          <div class="col text-h5" :class="{ 'bg-red': store.status.nIsVul }">
             South
           </div>
         </div>
@@ -32,7 +32,9 @@
               <q-item-section> Dealer → </q-item-section>
             </q-item>
             <q-item
-              v-show="store.currentDealer === 'E' || store.currentDealer === 'S'"
+              v-show="
+                store.currentDealer === 'E' || store.currentDealer === 'S'
+              "
               class="col-3 auctionCell q-pa-sm q-mb-md"
             >
               <q-item-section> Dealer → </q-item-section>
@@ -75,7 +77,10 @@
               @click="store.clearLvBid"
             >
               <q-item-section class="hidden">
-                <q-radio v-model="store.bidActionModel" :val="action.value" />
+                <q-radio
+                  v-model="store.userInputModel.action"
+                  :val="action.value"
+                />
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ action.value }}</q-item-label>
@@ -85,7 +90,7 @@
         </div>
         <div class="bid-level-group q-mb-sm">
           <q-btn-toggle
-            v-model="store.bidLvModel"
+            v-model="store.userInputModel.lv"
             :options="bidLvOptions"
             toggle-color="blue-grey-3"
             toggle-text-color="black"
@@ -99,7 +104,7 @@
         </div>
         <div class="bid-suits-group q-mb-md">
           <q-btn-toggle
-            v-model="store.bidSuitModel"
+            v-model="store.userInputModel.suit"
             :options="bidSuitOptions"
             toggle-color="blue-grey-3"
             toggle-text-color="black"
@@ -138,12 +143,12 @@
           />
           <q-btn
             class="full-width"
-            :label="store.isEnd ? 'Bidding Over' : 'OK'"
+            :label="store.status.isEnd ? 'Bidding Over' : 'OK'"
             size="xl"
-            :color="store.isEnd ? 'grey-4' : 'yellow'"
+            :color="store.status.isEnd ? 'grey-4' : 'yellow'"
             text-color="black"
             @click="store.onOKClick"
-            :disable="store.isEnd"
+            :disable="store.status.isEnd"
           />
         </div>
       </div>
@@ -164,9 +169,9 @@
           label="Next Hand"
           no-caps
           size="xl"
-          :color="store.isEnd ? 'yellow' : 'grey-4'"
+          :color="store.status.isEnd ? 'yellow' : 'grey-4'"
           text-color="black"
-          :disable="!store.isEnd"
+          :disable="!store.status.isEnd"
           @click="store.onNextClick"
         />
       </div>

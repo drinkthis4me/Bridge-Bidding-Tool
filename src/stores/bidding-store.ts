@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, reactive } from 'vue';
 
 export const useBiddingStore = defineStore('bidding', () => {
   interface bid {
@@ -18,25 +18,28 @@ export const useBiddingStore = defineStore('bidding', () => {
   const biddingArray = ref<bid[]>([]);
   const bidHistory = ref<history[]>([]);
 
-  const bidActionModel = ref('');
-  const bidLvModel = ref('');
-  const bidSuitModel = ref('');
-  const isAlert = ref(false);
+  const userInputModel = reactive({
+    action: '',
+    lv: '',
+    suit: '',
+    alert: false,
+  });
+
   const userInputBid = computed(() => {
-    const bidWAction = bidActionModel.value;
+    const bidWAction = userInputModel.action;
     const bidWLvAndSuit =
-      bidLvModel.value.length > 0 && bidSuitModel.value.length > 0
-        ? bidLvModel.value + bidSuitModel.value
+      userInputModel.lv.length > 0 && userInputModel.suit.length > 0
+        ? userInputModel.lv + userInputModel.suit
         : '';
     const userBid: bid = {
       bidding: bidWAction || bidWLvAndSuit,
-      isAlert: isAlert.value,
+      isAlert: userInputModel.alert,
       id: biddingArray.value.length + 1,
     };
     return userBid;
   });
 
-  const isEnd = ref(false);
+
   const vulSequence = [
     'O',
     'N',
@@ -55,9 +58,16 @@ export const useBiddingStore = defineStore('bidding', () => {
     'N',
     'E',
   ];
-  const currentHand = ref(1);
+
+  const status = reactive({
+    isEnd: false,
+    handNumber: 1,
+    nIsVul: false,
+    eIsVul: false,
+  }) 
+  
   const currentDealer = computed(() => {
-    const r = currentHand.value % 4;
+    const r = status.handNumber % 4;
     let ans = '';
 
     switch (r) {
@@ -79,27 +89,25 @@ export const useBiddingStore = defineStore('bidding', () => {
 
     return ans;
   });
-  const nIsVul = ref(false);
-  const eIsVul = ref(false);
 
   function clearLvBid() {
-    bidLvModel.value = '';
-    bidSuitModel.value = '';
+    userInputModel.lv = '';
+    userInputModel.suit = '';
   }
 
   function clearActionBid() {
-    bidActionModel.value = '';
+    userInputModel.action = '';
   }
 
   function clearAllbid() {
-    bidActionModel.value = '';
-    bidLvModel.value = '';
-    bidSuitModel.value = '';
-    isAlert.value = false;
+    userInputModel.action = '';
+    userInputModel.lv = '';
+    userInputModel.suit = '';
+    userInputModel.alert = false;
   }
 
   function onAlertClick() {
-    isAlert.value = true;    
+    userInputModel.alert = true;
   }
 
   function onOKClick() {
@@ -118,7 +126,7 @@ export const useBiddingStore = defineStore('bidding', () => {
 
   function onUndoClick() {
     biddingArray.value.pop();
-    isEnd.value = false;
+    status.isEnd = false;
   }
 
   function onNextClick() {
@@ -128,7 +136,7 @@ export const useBiddingStore = defineStore('bidding', () => {
     // Clear all
     clearAllbid();
     biddingArray.value = [];
-    isEnd.value = false;
+    status.isEnd = false;
 
     // Go to next Hand
     goToNextHand();
@@ -151,36 +159,36 @@ export const useBiddingStore = defineStore('bidding', () => {
       target.value.length < 4
         ? null
         : checkEnding(target.value)
-        ? (isEnd.value = true)
+        ? (status.isEnd = true)
         : null;
     }
   );
 
   function changeVul() {
-    const target = vulSequence[currentHand.value - 1];
+    const target = vulSequence[status.handNumber - 1];
     switch (target) {
       case 'N':
-        nIsVul.value = true;
-        eIsVul.value = false;
+        status.nIsVul = true;
+        status.eIsVul = false;
         break;
       case 'E':
-        nIsVul.value = false;
-        eIsVul.value = true;
+        status.nIsVul = false;
+        status.eIsVul = true;
         break;
       case 'B':
-        nIsVul.value = true;
-        eIsVul.value = true;
+        status.nIsVul = true;
+        status.eIsVul = true;
         break;
       case 'O':
-        nIsVul.value = false;
-        eIsVul.value = false;
+        status.nIsVul = false;
+        status.eIsVul = false;
         break;
     }
   }
 
   function goToNextHand() {
     // Change hand NO
-    currentHand.value < 16 ? (currentHand.value += 1) : (currentHand.value = 1);
+    status.handNumber < 16 ? (status.handNumber += 1) : (status.handNumber = 1);
 
     // Change vulnerability
     changeVul();
@@ -188,9 +196,9 @@ export const useBiddingStore = defineStore('bidding', () => {
 
   function saveToHistory() {
     const target = {
-      handNo: currentHand.value,
+      handNo: status.handNumber,
       dealer: currentDealer.value,
-      vul: vulSequence[currentHand.value - 1],
+      vul: vulSequence[status.handNumber - 1],
       sequence: [...biddingArray.value],
     };
     bidHistory.value.push(target);
@@ -200,16 +208,10 @@ export const useBiddingStore = defineStore('bidding', () => {
     biddingArray,
     bidHistory,
 
-    bidActionModel,
-    bidSuitModel,
-    bidLvModel,
+    userInputModel,
 
-    isEnd,
-    currentHand,
+    status,
     currentDealer,
-
-    nIsVul,
-    eIsVul,
 
     clearLvBid,
     clearActionBid,
