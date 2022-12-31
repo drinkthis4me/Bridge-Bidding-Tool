@@ -23,4 +23,5 @@ quasar dev
 quasar build
 ```
 
-License: MIT
+## License
+MIT
