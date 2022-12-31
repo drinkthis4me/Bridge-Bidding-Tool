@@ -1,6 +1,10 @@
-# Bridge-bidding-tool (bridge-bidding-tool)
+# Bridge bidding tool
 
-A Quasar Project
+A simple bidding page for four people. No more clunky bidding boxes.
+
+UI heavily influnced by Bridge Base Online.
+
+Written with Quasar framework.
 
 ## Install the dependencies
 ```bash
@@ -14,28 +18,9 @@ npm install
 quasar dev
 ```
 
-
-### Lint the files
-```bash
-yarn lint
-# or
-npm run lint
-```
-
-
-### Format the files
-```bash
-yarn format
-# or
-npm run format
-```
-
-
-
 ### Build the app for production
 ```bash
 quasar build
 ```
 
-### Customize the configuration
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
+License: MIT
