@@ -29,7 +29,7 @@
       </p>
 
       <h4>Licenses</h4>
-      <p>Not adopted yet. Planned: MIT Licenses </p>
+      <p>MIT</p>
     </main>
   </q-page>
 </template>
