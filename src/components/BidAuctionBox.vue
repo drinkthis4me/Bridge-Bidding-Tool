@@ -9,10 +9,7 @@
     <div class="auctionBox-body bg-cyan-2">
       <q-list class="row">
         <!-- v-Show if Dealer changes -->
-        <q-item
-          v-show="currentDealer !== 'W'"
-          class="col-3 auctionCell q-pa-sm q-mb-md"
-        >
+        <q-item v-show="currentDealer !== 'W'" class="col-3 auctionCell q-pa-sm q-mb-md">
           <q-item-section> Dealer → </q-item-section>
         </q-item>
         <q-item
@@ -21,10 +18,7 @@
         >
           <q-item-section> Dealer → </q-item-section>
         </q-item>
-        <q-item
-          v-show="currentDealer === 'S'"
-          class="col-3 auctionCell q-pa-sm q-mb-md"
-        >
+        <q-item v-show="currentDealer === 'S'" class="col-3 auctionCell q-pa-sm q-mb-md">
           <q-item-section> Dealer → </q-item-section>
         </q-item>
         <!-- end show if -->
@@ -37,7 +31,7 @@
             { 'bg-blue-3': bid.isAlert },
             { 'text-green': bid.bidding.includes('♣') },
             { 'text-orange': bid.bidding.includes('♦') },
-            { 'text-red': bid.bidding.includes('♥') },
+            { 'text-red': bid.bidding.includes('♥') }
           ]"
         >
           <q-item-section> {{ bid.bidding }} </q-item-section>
@@ -48,8 +42,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import { Bid } from '../types';
+import { defineComponent, PropType } from 'vue'
+import { Bid } from '../types'
 export default defineComponent({
   name: 'BidAuctionBox',
   props: {
@@ -58,10 +52,10 @@ export default defineComponent({
     currentDealer: { type: String, required: true },
     biddingArray: {
       type: Array as PropType<Bid[]>,
-      default: () => [] as Bid[],
-    },
-  },
-});
+      default: () => [] as Bid[]
+    }
+  }
+})
 </script>
 
 <style scoped lang="scss">

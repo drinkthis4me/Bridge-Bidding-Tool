@@ -2,10 +2,7 @@
   <q-page padding>
     <main>
       <h4>About</h4>
-      <p>
-        This app is built with Quasar framework. Then deployed to mobile using
-        Capacitor.
-      </p>
+      <p>This app is built with Quasar framework. Then deployed to mobile using Capacitor.</p>
       <p>UI heavily influnced by Bridge Base Online.</p>
 
       <p>
@@ -16,16 +13,12 @@
       </p>
 
       <p>
-        <a href="https://github.com/drinkthis4me/Bridge-Bidding-Tool">
-          Source code
-        </a>
+        <a href="https://github.com/drinkthis4me/Bridge-Bidding-Tool"> Source code </a>
       </p>
       <h4>Contact</h4>
       <p>
         Email me at
-        <a href="mailto:jamesoffice.417@gmail.com">
-          jamesoffice.417@gmail.com
-        </a>
+        <a href="mailto:jamesoffice.417@gmail.com"> jamesoffice.417@gmail.com </a>
       </p>
 
       <h4>Licenses</h4>
@@ -35,8 +28,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
 export default defineComponent({
-  name: 'AboutPage',
-});
+  name: 'AboutPage'
+})
 </script>

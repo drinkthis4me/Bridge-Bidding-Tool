@@ -25,18 +25,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useBiddingStore } from 'src/stores/bidding-store';
- 
+import { defineComponent } from 'vue'
+import { useBiddingStore } from 'src/stores/bidding-store'
+
 export default defineComponent({
   name: 'BidControlSub',
   setup() {
-    const store = useBiddingStore();
+    const store = useBiddingStore()
     return {
-      store,
-    };
-  },
-});
+      store
+    }
+  }
+})
 </script>
 
 <style scoped lang="scss">

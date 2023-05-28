@@ -2,13 +2,7 @@
   <q-page padding class="myPage-style">
     <div class="column">
       <div class="q-my-md text-center">
-        <q-btn
-          class="full-width"
-          label="Back"
-          color="info"
-          size="lg"
-          @click="$router.go(-1)"
-        />
+        <q-btn class="full-width" label="Back" color="info" size="lg" @click="$router.go(-1)" />
       </div>
       <div class="historyList">
         <q-list v-if="store.bidHistory.length > 0">
@@ -16,9 +10,7 @@
             <q-card bordered class="full-width">
               <q-card-section>
                 <div class="text-h4">No.{{ item.handNo }}</div>
-                <div class="text-subtitle2">
-                  Dealer: {{ item.dealer }} / Vul: {{ item.vul }}
-                </div>
+                <div class="text-subtitle2">Dealer: {{ item.dealer }} / Vul: {{ item.vul }}</div>
               </q-card-section>
 
               <BidAuctionBox
@@ -39,22 +31,22 @@
   </q-page>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useBiddingStore } from 'stores/bidding-store';
-import BidAuctionBox from 'src/components/BidAuctionBox.vue';
+import { defineComponent } from 'vue'
+import { useBiddingStore } from 'stores/bidding-store'
+import BidAuctionBox from 'src/components/BidAuctionBox.vue'
 export default defineComponent({
   name: 'BidHistory',
   components: {
-    BidAuctionBox,
+    BidAuctionBox
   },
   setup() {
-    const store = useBiddingStore();
+    const store = useBiddingStore()
 
     return {
-      store,
-    };
-  },
-});
+      store
+    }
+  }
+})
 </script>
 <style lang="scss">
 .myPage-style {

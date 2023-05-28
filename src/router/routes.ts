@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from 'vue-router';
+import { RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -8,32 +8,32 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         name: 'indexPage',
-        component: () => import('pages/IndexPage.vue'),
+        component: () => import('pages/IndexPage.vue')
       },
       {
         path: '/bidding',
         name: 'Bidding-tool',
-        component: () => import('pages/Bidding-tool.vue'),
+        component: () => import('pages/Bidding-tool.vue')
       },
       {
         path: '/history',
         name: 'History',
-        component: () => import('pages/BidHistory.vue'),
+        component: () => import('pages/BidHistory.vue')
       },
       {
         path: '/about',
         name: 'About',
-        component: () => import('pages/AboutPage.vue'),
-      },
-    ],
+        component: () => import('pages/AboutPage.vue')
+      }
+    ]
   },
 
   // Always leave this as last one,
   // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
-  },
-];
+    component: () => import('pages/ErrorNotFound.vue')
+  }
+]
 
-export default routes;
+export default routes

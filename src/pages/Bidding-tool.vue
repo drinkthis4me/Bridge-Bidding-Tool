@@ -18,28 +18,28 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useBiddingStore } from 'stores/bidding-store';
-import BidInfoBox from 'src/components/BidInfoBox.vue';
-import BidAuctionBox from 'src/components/BidAuctionBox.vue';
-import BidControlMain from 'src/components/BidControlMain.vue';
-import BidControlSub from 'src/components/BidControlSub.vue';
+import { defineComponent } from 'vue'
+import { useBiddingStore } from 'stores/bidding-store'
+import BidInfoBox from 'src/components/BidInfoBox.vue'
+import BidAuctionBox from 'src/components/BidAuctionBox.vue'
+import BidControlMain from 'src/components/BidControlMain.vue'
+import BidControlSub from 'src/components/BidControlSub.vue'
 export default defineComponent({
   name: 'bidding-tool',
   components: {
     BidInfoBox,
     BidAuctionBox,
     BidControlMain,
-    BidControlSub,
+    BidControlSub
   },
   setup() {
-    const store = useBiddingStore();
+    const store = useBiddingStore()
 
     return {
-      store,
-    };
-  },
-});
+      store
+    }
+  }
+})
 </script>
 
 <style scoped lang="scss">

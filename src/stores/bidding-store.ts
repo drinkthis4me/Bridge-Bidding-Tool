@@ -1,30 +1,30 @@
-import { defineStore } from 'pinia';
-import { ref, computed, watch, reactive } from 'vue';
-import { Bid, History } from '../types';
+import { defineStore } from 'pinia'
+import { ref, computed, watch, reactive } from 'vue'
+import { Bid, History } from '../types'
 export const useBiddingStore = defineStore('bidding', () => {
-  const biddingArray = ref<Bid[]>([]);
-  const bidHistory = ref<History[]>([]);
+  const biddingArray = ref<Bid[]>([])
+  const bidHistory = ref<History[]>([])
 
   const userInputModel = reactive({
     action: '',
     lv: '',
     suit: '',
-    alert: false,
-  });
+    alert: false
+  })
 
   const userInputBid = computed(() => {
-    const bidWAction = userInputModel.action;
+    const bidWAction = userInputModel.action
     const bidWLvAndSuit =
       userInputModel.lv.length > 0 && userInputModel.suit.length > 0
         ? userInputModel.lv + userInputModel.suit
-        : '';
+        : ''
     const userBid: Bid = {
       bidding: bidWAction || bidWLvAndSuit,
       isAlert: userInputModel.alert,
-      id: biddingArray.value.length + 1,
-    };
-    return userBid;
-  });
+      id: biddingArray.value.length + 1
+    }
+    return userBid
+  })
 
   const vulSequence = [
     'O',
@@ -42,90 +42,90 @@ export const useBiddingStore = defineStore('bidding', () => {
     'B',
     'O',
     'N',
-    'E',
-  ];
+    'E'
+  ]
 
   const status = reactive({
     isEnd: false,
     handNumber: 1,
     nIsVul: false,
-    eIsVul: false,
-  });
+    eIsVul: false
+  })
 
   const currentDealer = computed(() => {
-    const r = status.handNumber % 4;
-    let ans = '';
+    const r = status.handNumber % 4
+    let ans = ''
 
     switch (r) {
       case 1:
-        ans = 'N';
-        break;
+        ans = 'N'
+        break
       case 2:
-        ans = 'E';
-        break;
+        ans = 'E'
+        break
       case 3:
-        ans = 'S';
-        break;
+        ans = 'S'
+        break
       case 0:
-        ans = 'W';
-        break;
+        ans = 'W'
+        break
       default:
-        ans = 'error';
+        ans = 'error'
     }
 
-    return ans;
-  });
+    return ans
+  })
 
   function clearLvBid() {
-    userInputModel.lv = '';
-    userInputModel.suit = '';
+    userInputModel.lv = ''
+    userInputModel.suit = ''
   }
 
   function clearActionBid() {
-    userInputModel.action = '';
+    userInputModel.action = ''
   }
 
   function clearAllbid() {
-    userInputModel.action = '';
-    userInputModel.lv = '';
-    userInputModel.suit = '';
-    userInputModel.alert = false;
+    userInputModel.action = ''
+    userInputModel.lv = ''
+    userInputModel.suit = ''
+    userInputModel.alert = false
   }
 
   function onAlertClick() {
-    userInputModel.alert = true;
+    userInputModel.alert = true
   }
 
   function onOKClick() {
     // Block action if bid is empty
     if (!userInputBid.value.bidding) {
-      console.log('>>> Bid is empty');
-      return;
+      console.log('>>> Bid is empty')
+      return
     }
 
     // .push() new item to biddingArray
-    biddingArray.value.push(userInputBid.value);
+    biddingArray.value.push(userInputBid.value)
 
     // Reset all
-    setTimeout(() => clearAllbid(), 100);
+    setTimeout(() => clearAllbid(), 100)
   }
 
   function onUndoClick() {
-    biddingArray.value.pop();
-    status.isEnd = false;
+    biddingArray.value.pop()
+    status.isEnd = false
   }
 
   function onNextClick() {
     // Save to history
-    saveToHistory();
+    saveToHistory()
 
     // Clear all
-    clearAllbid();
-    biddingArray.value = [];
-    status.isEnd = false;
+    clearAllbid()
+    biddingArray.value = []
+    status.isEnd = false
 
     // Go to next Hand
-    goToNextHand();
+    goToNextHand()
   }
 
   function checkEnding(arr: Bid[]) {
@@ -133,51 +133,47 @@ export const useBiddingStore = defineStore('bidding', () => {
       arr[1].bidding === 'Pass' &&
       arr[1].bidding === arr[2].bidding &&
       arr[2].bidding === arr[3].bidding
-    );
+    )
   }
 
-  const target = computed(() => biddingArray.value.slice(-4));
+  const target = computed(() => biddingArray.value.slice(-4))
 
   // Watcher checks ending: if 3 or 4 consecutive passes appear
   watch(
     () => target.value,
     () => {
-      target.value.length < 4
-        ? null
-        : checkEnding(target.value)
-        ? (status.isEnd = true)
-        : null;
+      target.value.length < 4 ? null : checkEnding(target.value) ? (status.isEnd = true) : null
     }
-  );
+  )
 
   function changeVul() {
-    const target = vulSequence[status.handNumber - 1];
+    const target = vulSequence[status.handNumber - 1]
     switch (target) {
       case 'N':
-        status.nIsVul = true;
-        status.eIsVul = false;
-        break;
+        status.nIsVul = true
+        status.eIsVul = false
+        break
       case 'E':
-        status.nIsVul = false;
-        status.eIsVul = true;
-        break;
+        status.nIsVul = false
+        status.eIsVul = true
+        break
       case 'B':
-        status.nIsVul = true;
-        status.eIsVul = true;
-        break;
+        status.nIsVul = true
+        status.eIsVul = true
+        break
       case 'O':
-        status.nIsVul = false;
-        status.eIsVul = false;
-        break;
+        status.nIsVul = false
+        status.eIsVul = false
+        break
     }
   }
 
   function goToNextHand() {
     // Change hand NO
-    status.handNumber < 16 ? (status.handNumber += 1) : (status.handNumber = 1);
+    status.handNumber < 16 ? (status.handNumber += 1) : (status.handNumber = 1)
 
     // Change vulnerability
-    changeVul();
+    changeVul()
   }
 
   function saveToHistory() {
@@ -187,9 +183,9 @@ export const useBiddingStore = defineStore('bidding', () => {
       vul: vulSequence[status.handNumber - 1],
       nIsVul: status.nIsVul,
       eIsVul: status.eIsVul,
-      sequence: [...biddingArray.value],
-    };
-    bidHistory.value.push(target);
+      sequence: [...biddingArray.value]
+    }
+    bidHistory.value.push(target)
   }
 
   return {
@@ -208,6 +204,6 @@ export const useBiddingStore = defineStore('bidding', () => {
     onAlertClick,
     onNextClick,
 
-    goToNextHand,
-  };
-});
+    goToNextHand
+  }
+})

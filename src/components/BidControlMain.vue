@@ -13,10 +13,7 @@
           @click="store.clearLvBid"
         >
           <q-item-section class="hidden">
-            <q-radio
-              v-model="store.userInputModel.action"
-              :val="action.value"
-            />
+            <q-radio v-model="store.userInputModel.action" :val="action.value" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ action.value }}</q-item-label>
@@ -91,92 +88,92 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useBiddingStore } from 'src/stores/bidding-store';
+import { defineComponent } from 'vue'
+import { useBiddingStore } from 'src/stores/bidding-store'
 export default defineComponent({
   name: 'BidControlMain',
   setup() {
-    const store = useBiddingStore();
+    const store = useBiddingStore()
 
     const bidActions = [
       {
         value: 'Pass',
         textColor: 'text-black',
-        bgColor: 'bg-light-green-4',
+        bgColor: 'bg-light-green-4'
       },
       {
         value: 'Dbl',
         textColor: 'text-white',
-        bgColor: 'bg-red-8',
+        bgColor: 'bg-red-8'
       },
       {
         value: 'RDbl',
         textColor: 'text-white',
-        bgColor: 'bg-red-8',
-      },
-    ];
+        bgColor: 'bg-red-8'
+      }
+    ]
     const bidLvOptions = [
       {
         label: '1',
-        value: '1',
+        value: '1'
       },
       {
         label: '2',
-        value: '2',
+        value: '2'
       },
       {
         label: '3',
-        value: '3',
+        value: '3'
       },
       {
         label: '4',
-        value: '4',
+        value: '4'
       },
       {
         label: '5',
-        value: '5',
+        value: '5'
       },
       {
         label: '6',
-        value: '6',
+        value: '6'
       },
       {
         label: '7',
-        value: '7',
-      },
-    ];
+        value: '7'
+      }
+    ]
     const bidSuitOptions = [
       {
         value: '♣',
-        slot: 'CSlot',
+        slot: 'CSlot'
       },
       {
         value: '♦',
-        slot: 'DSlot',
+        slot: 'DSlot'
       },
       {
         value: '♥',
-        slot: 'HSlot',
+        slot: 'HSlot'
       },
       {
         value: '♠',
-        icon: 'mdi-cards-spade',
+        icon: 'mdi-cards-spade'
       },
       {
         label: 'NT',
-        value: 'NT',
-      },
-    ];
+        value: 'NT'
+      }
+    ]
 
     return {
       store,
 
       bidActions,
       bidLvOptions,
-      bidSuitOptions,
-    };
-  },
-});
+      bidSuitOptions
+    }
+  }
+})
 </script>
 
 <style scoped lang="scss">
