@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Bridge-bidding-tool</string>
+    <string name="title_activity_main">Bridge-bidding-tool</string>
+    <string name="package_name">org.capacitor.biddingtool.app</string>
+    <string name="custom_url_scheme">org.capacitor.biddingtool.app</string>
+</resources>

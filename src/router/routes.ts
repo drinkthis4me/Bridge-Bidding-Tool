@@ -12,13 +12,18 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: '/bidding',
-        name: 'Bidding-tool',
-        component: () => import('pages/Bidding-tool.vue')
+        name: 'BiddingTool',
+        component: () => import('pages/BiddingTool.vue')
       },
       {
         path: '/history',
         name: 'History',
         component: () => import('pages/BidHistory.vue')
+      },
+      {
+        path: '/setting',
+        name: 'Setting',
+        component: () => import('pages/SettingPage.vue')
       },
       {
         path: '/about',

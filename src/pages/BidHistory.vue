@@ -1,55 +1,67 @@
 <template>
-  <q-page padding class="myPage-style">
+  <q-page padding class="my-page">
     <div class="column">
-      <div class="q-my-md text-center">
-        <q-btn class="full-width" label="Back" color="info" size="lg" @click="$router.go(-1)" />
+      <div class="col q-my-md text-center">
+        <q-btn
+          class="full-width"
+          label="Back"
+          color="secondary"
+          size="lg"
+          @click="$router.go(-1)"
+        />
+        <q-btn
+          v-show="historyStore.histories.length"
+          class="full-width text-capitalize"
+          label="Delete all"
+          no-caps
+          color="negative"
+          size="lg"
+          @click="onClearClick"
+        />
       </div>
-      <div class="historyList">
-        <q-list v-if="store.bidHistory.length > 0">
-          <q-item v-for="item in store.bidHistory" :key="item.handNo">
-            <q-card bordered class="full-width">
-              <q-card-section>
-                <div class="text-h4">No.{{ item.handNo }}</div>
-                <div class="text-subtitle2">Dealer: {{ item.dealer }} / Vul: {{ item.vul }}</div>
-              </q-card-section>
-
-              <BidAuctionBox
-                :n-is-vul="item.nIsVul"
-                :e-is-vul="item.eIsVul"
-                :current-dealer="item.dealer"
-                :bidding-array="item.sequence"
-              />
-            </q-card>
+      <div class="col">
+        <q-list v-if="historyStore.histories.length > 0">
+          <q-item v-for="item in historyStore.histories" :key="item.handNo">
+            <HistoryCard :history="item" />
           </q-item>
         </q-list>
-        <div v-else class="text-h4 text-center bg-white q-pa-md">
-          No history.<br />
+        <div v-else class="text-center bg-white q-pa-md">
+          History is empty.<br />
           Go play some cards!
         </div>
       </div>
     </div>
   </q-page>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { useBiddingStore } from 'stores/bidding-store'
-import BidAuctionBox from 'src/components/BidAuctionBox.vue'
-export default defineComponent({
-  name: 'BidHistory',
-  components: {
-    BidAuctionBox
-  },
-  setup() {
-    const store = useBiddingStore()
 
-    return {
-      store
-    }
-  }
-})
+<script setup lang="ts">
+import { useQuasar } from 'quasar'
+import { useBiddingStore } from 'src/stores/useBiddingStore'
+import { useBoardStateStore } from 'src/stores/useBoardStateStore'
+import { useHistoryStore } from 'src/stores/useHistoryStore'
+import HistoryCard from 'src/components/HistoryCard.vue'
+
+const $q = useQuasar()
+const biddingStore = useBiddingStore()
+const boardStateStore = useBoardStateStore()
+const historyStore = useHistoryStore()
+
+function onClearClick() {
+  $q.dialog({
+    title: 'Confirm',
+    message: 'Delete all history?',
+    ok: true,
+    cancel: true
+  }).onOk(() => {
+    biddingStore.reset()
+    boardStateStore.reset()
+    historyStore.reset()
+  })
+}
 </script>
+
 <style lang="scss">
-.myPage-style {
+.my-page {
   background-color: green;
 }
 </style>
