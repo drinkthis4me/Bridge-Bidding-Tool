@@ -3,23 +3,37 @@ import { ref } from 'vue'
 import type { History } from 'src/types'
 import { useBiddingStore } from 'src/stores/useBiddingStore'
 import { useBoardStateStore } from 'src/stores/useBoardStateStore'
-import { Preferences } from '@capacitor/preferences'
+import { useCapacitorPreferences } from 'src/composables/useCapacitorPreferences'
+import { Notify } from 'quasar'
 
 export const useHistoryStore = defineStore('History', () => {
+  //
   // composables, stores
+  //
+  const { getPreferences, setPreferences, removePreferences } = useCapacitorPreferences()
   const biddingStore = useBiddingStore()
   const boardStateStore = useBoardStateStore()
 
+  //
+  // history
+  //
   const histories = ref<History[]>([])
 
   /**
    * Get history from local storage
    */
   async function init() {
-    const { value } = await Preferences.get({ key: 'bid-histories' })
-    if (!value) return
-    histories.value = JSON.parse(value)
-    boardStateStore.handNo = (histories.value.at(-1)?.handNo ?? 0) + 1
+    try {
+      const value = await getPreferences('bid-histories')
+      if (!value) return
+      histories.value = value
+      boardStateStore.handNo = (histories.value.at(-1)?.handNo ?? 0) + 1
+    } catch (e) {
+      Notify.create({
+        message: (e as Error).message,
+        type: 'negative'
+      })
+    }
   }
 
   function pushNewHistory(result?: number) {
@@ -37,15 +51,26 @@ export const useHistoryStore = defineStore('History', () => {
   }
 
   async function _saveHistories() {
-    await Preferences.set({
-      key: 'bid-histories',
-      value: JSON.stringify(histories.value)
-    })
+    await setPreferences('bid-histories', histories.value)
   }
 
   async function reset() {
     histories.value = []
-    await Preferences.remove({ key: 'bid-histories' })
+    await removePreferences('bid-histories')
+  }
+
+  function editResult(handNo: number, result: number) {
+    try {
+      const target = histories.value.find((h) => h.handNo === handNo)
+      if (!target) throw new Error('Cannot find history')
+      target.result = result
+      _saveHistories()
+    } catch (e) {
+      Notify.create({
+        message: (e as Error).message,
+        type: 'negative'
+      })
+    }
   }
 
   return {
@@ -55,6 +80,7 @@ export const useHistoryStore = defineStore('History', () => {
     // actions
     init,
     pushNewHistory,
-    reset
+    reset,
+    editResult
   }
 })

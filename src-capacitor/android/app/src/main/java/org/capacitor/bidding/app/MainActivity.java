@@ -1,4 +1,4 @@
-package org.capacitor.biddingtool.app;
+package org.capacitor.bidding.app;
 
 import com.getcapacitor.BridgeActivity;
 

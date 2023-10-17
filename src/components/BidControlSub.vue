@@ -11,6 +11,7 @@
       @click="biddingStore.undo"
     />
     <q-btn
+      v-show="isShowResultButton"
       class="full-width q-mb-md"
       icon="mdi-clipboard-edit-outline"
       :label="labelResult"
@@ -47,6 +48,10 @@ const biddingStore = useBiddingStore()
 const historyStore = useHistoryStore()
 const boardStateStore = useBoardStateStore()
 
+const isShowResultButton = computed(() => {
+  return biddingStore.bidSequence.some((bid) => bid.call === 'Bid')
+})
+
 const result = ref<number | null>(null)
 
 const labelResult = computed(() => {
@@ -75,17 +80,15 @@ const resultLimit = computed(() => {
 })
 
 function openInputDialog() {
-  // todo : https://quasar.dev/quasar-plugins/dialog#cordova-capacitor-back-button
-  // todo: use custom dialog component with select
   $q.dialog({
     component: DialogInputResult,
     componentProps: {
       max: resultLimit.value.max,
       min: resultLimit.value.min
     }
-  }).onOk((payload) => {
+  }).onOk((payload: number) => {
     // save payload to local
-    result.value = Number(payload)
+    result.value = payload
   })
 }
 

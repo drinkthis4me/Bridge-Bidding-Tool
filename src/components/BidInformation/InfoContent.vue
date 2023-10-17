@@ -52,7 +52,6 @@ const header = computed(() => {
 .my-auction-box {
   .my-auction-box-head {
     border: 1px solid black;
-    // border-top: 0;
     height: 40px;
   }
 

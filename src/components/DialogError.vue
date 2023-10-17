@@ -23,8 +23,6 @@
 
 <script setup>
 import { useDialogPluginComponent } from 'quasar'
-// todo: check capacitor dialog config
-// https://quasar.dev/vue-components/dialog#cordova-capacitor-back-button
 defineProps({
   // ...your custom props
   errorMessage: String,

@@ -1,15 +1,24 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { Preferences } from '@capacitor/preferences'
 import { usePlayAudio } from 'src/composables/usePlayAudio'
+import { useCapacitorPreferences } from 'src/composables/useCapacitorPreferences'
+import { useCapacitorHaptics } from 'src/composables/useCapacitorHaptics'
+import { useCapacitorKeepAwake } from 'src/composables/useCapacitorKeepAwake'
 
 export const useEnvironmentStore = defineStore('Environment', () => {
-  // todo https://github.com/capacitor-community/keep-awake
+  //
   // composables
+  //
+  const { getPreferences, setPreferences } = useCapacitorPreferences()
   const { playBeep } = usePlayAudio()
+  const { hapticsImpact, ImpactStyle } = useCapacitorHaptics()
+  const { changeKeepAwake } = useCapacitorKeepAwake()
 
+  //
+  // user preference settings
+  //
   const settings = ref({
-    inputMethod: 'single', // 'single', 'double', or 'button'
+    inputMethod: 'single', // 'single' | 'double' | 'button'
     isScreenAlwaysOn: true,
     isSoundOn: true,
     volume: 1,
@@ -18,7 +27,7 @@ export const useEnvironmentStore = defineStore('Environment', () => {
 
   function _getDefaultSettings() {
     return {
-      inputMethod: 'single', // 'single', 'double', or 'button'
+      inputMethod: 'single', // 'single' | 'double' | 'button'
       isScreenAlwaysOn: true,
       isSoundOn: true,
       volume: 1,
@@ -27,29 +36,36 @@ export const useEnvironmentStore = defineStore('Environment', () => {
   }
 
   async function init() {
-    const { value } = await Preferences.get({ key: 'bid-environment' })
+    const value = await getPreferences('bid-environment')
     if (value) {
-      const parsed = JSON.parse(value)
-      settings.value = parsed
+      // load old settings
+      settings.value = value
     } else {
       reset()
     }
+    changeKeepAwake(settings.value.isScreenAlwaysOn)
   }
 
   async function save() {
-    await Preferences.set({
-      key: 'bid-environment',
-      value: JSON.stringify(settings.value)
-    })
+    await setPreferences('bid-environment', settings.value)
   }
 
   function reset() {
     settings.value = _getDefaultSettings()
   }
 
-  function playBeepSound() {
+  //
+  // actions with state as settings
+  //
+
+  async function playBeepSound() {
     if (!settings.value?.isSoundOn) return
     playBeep(settings.value.volume)
+  }
+
+  async function vibrate() {
+    if (!settings.value?.isVibrationOn) return
+    hapticsImpact(ImpactStyle.Medium)
   }
 
   return {
@@ -60,6 +76,7 @@ export const useEnvironmentStore = defineStore('Environment', () => {
     init,
     save,
     reset,
-    playBeepSound
+    playBeepSound,
+    vibrate
   }
 })

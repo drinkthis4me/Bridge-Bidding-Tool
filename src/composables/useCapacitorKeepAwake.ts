@@ -1,25 +1,38 @@
 import { KeepAwake } from '@capacitor-community/keep-awake'
+import { Notify } from 'quasar'
 
 export function useCapacitorKeepAwake() {
   const keepAwake = async () => {
     try {
-      if (await !isSupported()) return
+      const isSupported = await checkIsSupported()
+      if (!isSupported) {
+        throw new Error('keep-awake is not support on this device')
+      }
       await KeepAwake.keepAwake()
     } catch (e) {
-      console.log(e)
+      Notify.create({
+        message: (e as Error).message,
+        type: 'negative'
+      })
     }
   }
 
   const allowSleep = async () => {
     try {
-      if (await !isSupported()) return
+      const isSupported = await checkIsSupported()
+      if (!isSupported) {
+        throw new Error('keep-awake is not support on this device')
+      }
       await KeepAwake.allowSleep()
     } catch (e) {
-      console.log(e)
+      Notify.create({
+        message: (e as Error).message,
+        type: 'negative'
+      })
     }
   }
 
-  const isSupported = async () => {
+  const checkIsSupported = async () => {
     const result = await KeepAwake.isSupported()
     return result.isSupported
   }
@@ -35,7 +48,7 @@ export function useCapacitorKeepAwake() {
   return {
     keepAwake,
     allowSleep,
-    isSupported,
+    checkIsSupported,
     changeKeepAwake
   }
 }

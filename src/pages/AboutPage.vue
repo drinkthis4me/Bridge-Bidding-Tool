@@ -2,14 +2,16 @@
   <q-page padding>
     <main>
       <h4>About</h4>
-      <p>This app is built with Quasar framework. Then deployed to mobile using Capacitor.</p>
-      <p>UI heavily influnced by Bridge Base Online.</p>
+      <p>This app is built with Quasar framework, then deployed to mobile using Capacitor.</p>
+      <p>UI heavily influenced by Bridge Base Online.</p>
 
       <p>
         Tools: <br />
         <a href="https://quasar.dev/"> Quasar framework </a> <br />
         <a href="https://capacitorjs.com/">Capacitor by Ionic</a> <br />
         <a href="https://fonts.google.com/icons/">Material Symbols and Icons - Google Fonts</a>
+        <br />
+        <a href="https://pictogrammers.com/library/mdi/">Material Design Icons</a>
       </p>
 
       <p>

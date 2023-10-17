@@ -274,7 +274,7 @@ function submitDblClick() {
 }
 
 function handleAddNewCall() {
-  environmentStore.playBeepSound()
+  giveFeedback()
   if (!biddingStore.call) {
     biddingStore.call = 'Bid'
   }
@@ -283,20 +283,25 @@ function handleAddNewCall() {
 }
 
 function onUndoClick() {
-  environmentStore.playBeepSound()
+  giveFeedback()
   biddingStore.undo()
 }
 
 function onRedoClick() {
-  environmentStore.playBeepSound()
+  giveFeedback()
   biddingStore.redo()
 }
 
 function onAllPassClick() {
-  environmentStore.playBeepSound()
+  giveFeedback()
   biddingStore.addAllPass()
   biddingStore.resetBidStatus()
   window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+async function giveFeedback() {
+  environmentStore.playBeepSound()
+  environmentStore.vibrate()
 }
 </script>
 

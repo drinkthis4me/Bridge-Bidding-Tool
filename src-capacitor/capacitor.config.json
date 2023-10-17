@@ -1,9 +1,9 @@
 {
-  "appId": "org.capacitor.biddingtool.app",
+  "appId": "org.capacitor.bidding.app",
   "appName": "Bridge-bidding-tool",
   "webDir": "www",
   "server": {
     "androidScheme": "https",
-    "url": "http://192.168.66.15:9500"
+    "url": "http://localhost:9500"
   }
 }

@@ -101,96 +101,11 @@ export const useBiddingStore = defineStore('Bidding', () => {
     )
   })
 
-  // function _checkValidBid(currentBid: Bid, bidSequence: Bid[]) {
-  //   if (bidSequence.length) {
-  //     const lastBid = bidSequence[bidSequence.length - 1]
-  //     const lastProactiveBid = bidSequence.toReversed().find((bid) => bid.call !== 'P')
-  //     switch (lastBid.call) {
-  //       case 'Bid': {
-  //         // 1c-1d
-  //         if (currentBid.call === 'Bid') {
-  //           // check level & suit
-  //           if (lastBid.level > currentBid.level) {
-  //             return false
-  //           } else if (lastBid.level === currentBid.level) {
-  //             // check suit
-  //             return lastBid.suit < currentBid.suit
-  //           } else {
-  //             return true
-  //           }
-  //         }
-  //         // 1c-p | 1c-dbl
-  //         return currentBid.call !== 'RDbl'
-  //       }
-  //       case 'Dbl': {
-  //         // check level & suit
-  //         // 1s-dbl-?
-  //         // 1s-p-p-dbl-?
-  //         if (lastProactiveBid && 'level' in lastProactiveBid) {
-  //           if (currentBid.call === 'Bid') {
-  //             if (lastProactiveBid.level > currentBid.level) {
-  //               return false
-  //             } else if (lastProactiveBid.level === currentBid.level) {
-  //               return lastProactiveBid.suit < currentBid.suit
-  //             } else {
-  //               return true
-  //             }
-  //           } else {
-  //             return currentBid.call !== 'Dbl'
-  //           }
-  //         }
-  //         return currentBid.call !== 'Dbl'
-  //       }
-  //       case 'RDbl': {
-  //         // check level & suit
-  //         if (lastProactiveBid && 'level' in lastProactiveBid) {
-  //           if (currentBid.call === 'Bid') {
-  //             if (lastProactiveBid.level > currentBid.level) {
-  //               return false
-  //             } else if (lastProactiveBid.level === currentBid.level) {
-  //               return lastProactiveBid.suit < currentBid.suit
-  //             } else {
-  //               return true
-  //             }
-  //           } else {
-  //             return currentBid.call !== 'RDbl'
-  //           }
-  //         }
-  //         return currentBid.call !== 'RDbl'
-  //       }
-  //       default: // 'P'
-  //         if (lastProactiveBid && 'level' in lastProactiveBid) {
-  //           if (currentBid.call === 'Bid') {
-  //             if (lastProactiveBid.level > currentBid.level) {
-  //               return false
-  //             } else if (lastProactiveBid.level === currentBid.level) {
-  //               return lastProactiveBid.suit < currentBid.suit
-  //             } else {
-  //               return true
-  //             }
-  //           } else {
-  //             if (lastProactiveBid.id + 2 !== currentBid.id) {
-  //               // 1d-p-p-?
-  //               return currentBid.call === 'P' || currentBid.call === 'Dbl'
-  //             }
-  //             // 1d-p-?
-  //             return currentBid.call === 'P'
-  //           }
-  //         }
-  //         return currentBid.call === 'P' || currentBid.call === 'Bid'
-  //     }
-  //   } else {
-  //     // first bid
-  //     return currentBid.call === 'Bid' || currentBid.call === 'P'
-  //   }
-  // }
-
   function addNewBid() {
     try {
       // save new bid
       if (!currentBid.value) {
-        // todo check valid bid
-        throw new Error('Please choose level')
+        throw new Error('Please enter valid bid')
       }
       bidSequence.value.push(currentBid.value)
       // save new history

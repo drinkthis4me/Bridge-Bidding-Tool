@@ -1,21 +1,53 @@
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
+import { Notify } from 'quasar'
 
 export function useCapacitorHaptics() {
-  async function hapticsImpactMedium() {
-    await Haptics.impact({ style: ImpactStyle.Medium })
+  async function hapticsImpact(style?: ImpactStyle) {
+    try {
+      if (style) {
+        await Haptics.impact({ style })
+      } else {
+        await Haptics.impact()
+      }
+    } catch (e) {
+      Notify.create({
+        message: (e as Error).message,
+        type: 'negative'
+      })
+    }
   }
 
-  async function hapticsImpactLight() {
-    await Haptics.impact({ style: ImpactStyle.Light })
+  async function hapticsVibrate(duration: number) {
+    try {
+      await Haptics.vibrate({ duration: duration })
+    } catch (e) {
+      Notify.create({
+        message: (e as Error).message,
+        type: 'negative'
+      })
+    }
   }
 
-  async function hapticsVibrate() {
-    await Haptics.vibrate({ duration: 500 })
+  async function hapticsNotification(type?: NotificationType) {
+    try {
+      if (type) {
+        await Haptics.notification({ type: type })
+      } else {
+        await Haptics.notification()
+      }
+    } catch (e) {
+      Notify.create({
+        message: (e as Error).message,
+        type: 'negative'
+      })
+    }
   }
 
   return {
-    hapticsImpactMedium,
-    hapticsImpactLight,
-    hapticsVibrate
+    hapticsImpact,
+    hapticsVibrate,
+    hapticsNotification,
+    ImpactStyle,
+    NotificationType
   }
 }

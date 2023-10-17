@@ -4,6 +4,9 @@ import type { Vulnerability } from 'src/types'
 import { useBiddingStore } from './useBiddingStore'
 
 export const useBoardStateStore = defineStore('BoardState', () => {
+  //
+  // composables
+  //
   const biddingStore = useBiddingStore()
 
   //

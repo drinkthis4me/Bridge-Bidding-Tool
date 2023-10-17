@@ -50,7 +50,9 @@ function onClearClick() {
   $q.dialog({
     title: 'Confirm',
     message: 'Delete all history?',
-    ok: true,
+    ok: {
+      color: 'negative'
+    },
     cancel: true
   }).onOk(() => {
     biddingStore.reset()

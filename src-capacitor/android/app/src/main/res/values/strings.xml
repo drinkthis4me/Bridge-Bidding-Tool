@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Bridge-bidding-tool</string>
     <string name="title_activity_main">Bridge-bidding-tool</string>
-    <string name="package_name">org.capacitor.biddingtool.app</string>
-    <string name="custom_url_scheme">org.capacitor.biddingtool.app</string>
+    <string name="package_name">org.capacitor.bidding.app</string>
+    <string name="custom_url_scheme">org.capacitor.bidding.app</string>
 </resources>

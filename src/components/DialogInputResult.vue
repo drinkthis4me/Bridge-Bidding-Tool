@@ -7,35 +7,41 @@
       </q-card-section>
 
       <q-card-section>
-        <q-select outlined v-model="result" :options="options" autofocus />
+        <q-select
+          outlined
+          autofocus
+          v-model="_result"
+          :options="options"
+          options-selected-class="text-white bg-secondary"
+        />
       </q-card-section>
 
       <q-separator dark />
 
-      <!-- buttons example -->
-      <q-card-actions align="center">
-        <q-btn color="primary" label="Close" outline @click="onDialogCancel" />
-        <q-btn color="primary" label="Ok" :disabled="result == null" @click="onDialogOK(result)" />
+      <q-card-actions align="right">
+        <q-btn color="primary" label="Close" flat @click="onDialogCancel" />
+        <q-btn
+          color="primary"
+          label="Ok"
+          :disabled="_result == null"
+          @click="onDialogOK(_result)"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useDialogPluginComponent } from 'quasar'
-// todo: check capacitor dialog config
-// https://quasar.dev/vue-components/dialog#cordova-capacitor-back-button
-
+import { QSelect } from 'quasar'
 interface Props {
   max?: number
   min?: number
+  result?: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  max: 6,
-  min: -13
-})
+const props = defineProps<Props>()
 
 defineEmits([
   // REQUIRED; need to specify some events that your
@@ -50,12 +56,23 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginC
 //                    example: onDialogOK() - no payload
 //                    example: onDialogOK({ /*...*/ }) - with payload
 // onDialogCancel - Function to call to settle dialog with "cancel" outcome
-const result = ref<number>()
-const _options: number[] = []
+const _result = ref<number>(0)
 
-for (let i = 7; i > -14; i--) {
-  _options.push(i)
-}
+const options = computed(() => {
+  const _options: number[] = []
+  const max = props.max ?? 6
+  const min = props.min ?? -13
 
-const options = computed(() => _options.filter((o) => o >= props.min && o <= props.max))
+  for (let i = max; i > min; i--) {
+    _options.push(i)
+  }
+
+  return _options
+})
+
+onMounted(() => {
+  if (props.result !== undefined) {
+    _result.value = props.result
+  }
+})
 </script>

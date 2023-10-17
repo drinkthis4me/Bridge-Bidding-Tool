@@ -31,7 +31,7 @@
               v-model="settings.isScreenAlwaysOn"
               color="primary"
               keep-color
-              @update:model-value="(val, e) => onScreenOnClick(val as boolean)"
+              @update:model-value="(val) => onScreenOnClick(val as boolean)"
             />
           </q-item-section>
         </q-item>
@@ -95,17 +95,20 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted } from 'vue'
+import { onUpdated } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useEnvironmentStore } from 'src/stores/useEnvironmentStore'
-import { Haptics, ImpactStyle } from '@capacitor/haptics'
-import { usePlayAudio } from 'src/composables/usePlayAudio'
 import { useQuasar } from 'quasar'
+import { usePlayAudio } from 'src/composables/usePlayAudio'
+import { useCapacitorHaptics } from 'src/composables/useCapacitorHaptics'
 import { useCapacitorKeepAwake } from 'src/composables/useCapacitorKeepAwake'
 
 const environmentStore = useEnvironmentStore()
 const { settings } = storeToRefs(environmentStore)
 const $q = useQuasar()
+const { hapticsNotification, NotificationType } = useCapacitorHaptics()
+const { playBeep } = usePlayAudio()
+const { changeKeepAwake } = useCapacitorKeepAwake()
 
 const inputMethodOptions = [
   { value: 'single', label: 'Single click' },
@@ -114,15 +117,12 @@ const inputMethodOptions = [
 ]
 
 async function onVibrationClick() {
-  await Haptics.vibrate({ duration: 2000 })
+  hapticsNotification(NotificationType.Success)
 }
 
-const { changeKeepAwake } = useCapacitorKeepAwake()
 async function onScreenOnClick(val: boolean) {
   changeKeepAwake(val)
 }
-
-const { playBeep } = usePlayAudio()
 
 function onResetClick() {
   $q.dialog({
@@ -137,7 +137,7 @@ function onResetClick() {
   })
 }
 
-onUnmounted(() => {
+onUpdated(() => {
   environmentStore.save()
 })
 </script>
