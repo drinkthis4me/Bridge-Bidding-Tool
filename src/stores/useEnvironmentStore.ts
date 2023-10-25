@@ -5,6 +5,8 @@ import { useCapacitorPreferences } from 'src/composables/useCapacitorPreferences
 import { useCapacitorHaptics } from 'src/composables/useCapacitorHaptics'
 import { useCapacitorKeepAwake } from 'src/composables/useCapacitorKeepAwake'
 
+const LOCAL_STORAGE_KEY = 'bid-environment'
+
 export const useEnvironmentStore = defineStore('Environment', () => {
   //
   // composables
@@ -12,7 +14,7 @@ export const useEnvironmentStore = defineStore('Environment', () => {
   const { getPreferences, setPreferences } = useCapacitorPreferences()
   const { playBeep } = usePlayAudio()
   const { hapticsImpact, ImpactStyle } = useCapacitorHaptics()
-  const { changeKeepAwake } = useCapacitorKeepAwake()
+  const { checkIsSupported, changeKeepAwake } = useCapacitorKeepAwake()
 
   //
   // user preference settings
@@ -36,18 +38,20 @@ export const useEnvironmentStore = defineStore('Environment', () => {
   }
 
   async function init() {
-    const value = await getPreferences('bid-environment')
+    const value = await getPreferences(LOCAL_STORAGE_KEY)
     if (value) {
       // load old settings
       settings.value = value
     } else {
       reset()
     }
-    changeKeepAwake(settings.value.isScreenAlwaysOn)
+
+    // init keepAwake
+    setKeepAwake()
   }
 
   async function save() {
-    await setPreferences('bid-environment', settings.value)
+    setPreferences(LOCAL_STORAGE_KEY, settings.value)
   }
 
   function reset() {
@@ -68,6 +72,13 @@ export const useEnvironmentStore = defineStore('Environment', () => {
     hapticsImpact(ImpactStyle.Medium)
   }
 
+  async function setKeepAwake() {
+    const isSupported = await checkIsSupported()
+    if (isSupported) {
+      changeKeepAwake(settings.value.isScreenAlwaysOn)
+    }
+  }
+
   return {
     // state
     settings,
@@ -77,6 +88,7 @@ export const useEnvironmentStore = defineStore('Environment', () => {
     save,
     reset,
     playBeepSound,
-    vibrate
+    vibrate,
+    setKeepAwake
   }
 })

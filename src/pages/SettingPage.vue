@@ -95,7 +95,6 @@
 </template>
 
 <script setup lang="ts">
-import { onUpdated } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useEnvironmentStore } from 'src/stores/useEnvironmentStore'
 import { useQuasar } from 'quasar'
@@ -134,10 +133,13 @@ function onResetClick() {
     cancel: true
   }).onOk(() => {
     environmentStore.reset()
+    // reset keepAwake
+    environmentStore.setKeepAwake()
   })
 }
 
-onUpdated(() => {
+// save state changes to local storage
+environmentStore.$subscribe(() => {
   environmentStore.save()
 })
 </script>

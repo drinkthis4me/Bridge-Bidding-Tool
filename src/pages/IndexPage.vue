@@ -17,8 +17,8 @@ const deviceInfo = ref('')
 
 onMounted(async () => {
   const result = await getDeviceInfo()
-  if (result?.name) {
-    deviceInfo.value = result.name
+  if (result?.osVersion) {
+    deviceInfo.value = result.osVersion
   }
 })
 </script>
