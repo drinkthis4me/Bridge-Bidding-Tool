@@ -55,11 +55,24 @@ function onClearClick() {
     },
     cancel: true
   }).onOk(() => {
-    biddingStore.reset()
-    boardStateStore.reset()
-    historyStore.reset()
+    onDialogOK()
   })
 }
+
+function onDialogOK() {
+  biddingStore.reset()
+  boardStateStore.reset()
+  historyStore.reset()
+  $q.notify({
+    message: 'History deleted',
+    type: 'info',
+    timeout: 2000
+  })
+}
+
+historyStore.$subscribe(() => {
+  historyStore.save()
+})
 </script>
 
 <style lang="scss">

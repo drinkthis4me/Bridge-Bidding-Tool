@@ -2,23 +2,34 @@
   <q-page class="column items-center justify-center">
     <div class="text-h4 text-center">Bidding Tool</div>
     <div class="q-my-md">v1.0.0-alpha</div>
+    <q-btn
+      label="Device Info"
+      no-caps
+      outline
+      color="primary"
+      class="q-mb-md"
+      @click="openDeviceInfoDialog"
+    />
     <q-btn label="Start Bidding" no-caps color="secondary" to="/bidding" size="xl" />
-    <div v-if="deviceInfo" class="q-my-md">Device Info: {{ deviceInfo }}</div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
 import { useDeviceInfo } from 'src/composables/useDeviceInfo'
+import { useQuasar } from 'quasar'
+import DialogDeviceInfo from 'src/components/DialogDeviceInfo.vue'
 
+const $q = useQuasar()
 const { getDeviceInfo } = useDeviceInfo()
 
-const deviceInfo = ref('')
-
-onMounted(async () => {
+async function openDeviceInfoDialog() {
   const result = await getDeviceInfo()
-  if (result?.osVersion) {
-    deviceInfo.value = result.osVersion
-  }
-})
+
+  $q.dialog({
+    component: DialogDeviceInfo,
+    componentProps: {
+      deviceInfo: result
+    }
+  })
+}
 </script>

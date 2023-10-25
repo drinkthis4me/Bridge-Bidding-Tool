@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import type { History } from 'src/types'
 import { useBiddingStore } from 'src/stores/useBiddingStore'
 import { useBoardStateStore } from 'src/stores/useBoardStateStore'
@@ -41,11 +41,6 @@ export const useHistoryStore = defineStore('History', () => {
   async function save() {
     await setPreferences(LOCAL_STORAGE_KEY, histories.value)
   }
-
-  watch(
-    () => histories.value,
-    () => save()
-  )
 
   async function reset() {
     histories.value = []
